@@ -72,7 +72,7 @@
 					"source": {
 						"type": "SqlSource",
 						"sqlReaderQuery": {
-							"value": "select * from data_source_tabl where LastModifytime > '@{activity('OldWaterMarkLookup').output.firstRow.WatermarkValue}' and LastModifytime <= '@{activity('NewWaterMarkLookup').output.firstRow.NewWatermarkvalue}'",
+							"value": "select * from data_source_table where LastModifytime > '@{activity('OldWaterMarkLookup').output.firstRow.WatermarkValue}' and LastModifytime <= '@{activity('NewWaterMarkLookup').output.firstRow.NewWatermarkvalue}'",
 							"type": "Expression"
 						}
 					},
