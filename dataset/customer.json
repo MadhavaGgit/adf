@@ -1,0 +1,32 @@
+{
+	"name": "customer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AZ_AdvantureWorks",
+			"type": "LinkedServiceReference"
+		},
+		"type": "AzureSqlTable",
+		"structure": [
+			{
+				"name": "CustomerID",
+				"type": "Int32"
+			},
+			{
+				"name": "FirstName",
+				"type": "String"
+			},
+			{
+				"name": "LastName",
+				"type": "String"
+			},
+			{
+				"name": "CompanyName",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"tableName": "[dbo].[customer]"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

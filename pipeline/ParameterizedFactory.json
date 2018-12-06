@@ -1,0 +1,129 @@
+{
+	"name": "ParameterizedFactory",
+	"properties": {
+		"activities": [
+			{
+				"name": "CompanyBikeCustomer",
+				"type": "Copy",
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"source": {
+						"type": "SqlSource",
+						"sqlReaderQuery": {
+							"value": "@pipeline().parameters.SourceQuery",
+							"type": "Expression"
+						}
+					},
+					"sink": {
+						"type": "SqlSink",
+						"writeBatchSize": 10000,
+						"preCopyScript": "truncate table dbo.customer"
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 0,
+					"translator": {
+						"type": "TabularTranslator",
+						"columnMappings": {
+							"CustomerID": "CustomerID",
+							"FirstName": "FirstName",
+							"LastName": "LastName",
+							"CompanyName": "CompanyName"
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AdvantureWorks",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "customer",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "SuccessMail",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "CompanyBikeCustomer",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"url": "https://prod-46.eastus.logic.azure.com:443/workflows/1ff97b95273f49acaf626ed17d2bb8db/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=eiVyusoO8xsD3jeqHtNAsl8sdgJcjHpuU_RED3YymZU",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"message": "@{activity('CompanyBikeCustomer').output.dataWritten}",
+						"dataFactoryName": "@{pipeline().DataFactory}",
+						"pipelineName": "@{pipeline().Pipeline}",
+						"receiver": "@pipeline().parameters.receiver"
+					}
+				}
+			},
+			{
+				"name": "FailureMail",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "CompanyBikeCustomer",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"url": "https://prod-30.eastus.logic.azure.com:443/workflows/21ab6c507a8c41f0861275c0fa342e36/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=N2znDHb_6x34WfB_7XXlI5Zh_Sf5VpfR2DMguNKs9fU",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"message": "@{activity('CompanyBikeCustomer').error.message}",
+						"dataFactoryName": "@{pipeline().DataFactory}",
+						"pipelineName": "@{pipeline().Pipeline}",
+						"receiver": "@pipeline().parameters.receiver"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"SourceQuery": {
+				"type": "String",
+				"defaultValue": "select CustomerID,FirstName,LastName,CompanyName from SalesLT.customer where CompanyName like '%Bike%'"
+			},
+			"receiver": {
+				"type": "String"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
