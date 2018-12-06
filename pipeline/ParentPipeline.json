@@ -1,0 +1,36 @@
+{
+	"name": "ParentPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "CallParameterPipeline",
+				"type": "ExecutePipeline",
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ParameterizedFactory",
+						"type": "PipelineReference"
+					}
+				}
+			},
+			{
+				"name": "CallIncPipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CallParameterPipeline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AdfIncPipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		]
+	}
+}
