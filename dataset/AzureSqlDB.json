@@ -1,0 +1,20 @@
+{
+	"name": "AzureSqlDB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AZ_AdvantureWorks",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServerName": "sydev.database.windows.net",
+				"DBName": "SY",
+				"UserName": "syuser",
+				"Password": "Zensar@18"
+			}
+		},
+		"type": "AzureSqlTable",
+		"typeProperties": {
+			"tableName": "[dbo].[watermarktable]"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
