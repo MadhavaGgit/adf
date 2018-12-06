@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "az-dev-sy"
+		},
+		"AZ_AdvantureWorks_connectionString": {
+			"value": ""
+		},
+		"BlobSource_connectionString": {
+			"value": ""
+		},
+		"DestAzure_properties_typeProperties_fileName": {
+			"value": "@CONCAT('Incremental-', pipeline().RunId, '.txt')"
+		},
+		"DestAzure_properties_typeProperties_folderPath": {
+			"value": "adfpractise"
+		}
+	}
+}
