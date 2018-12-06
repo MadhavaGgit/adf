@@ -72,7 +72,7 @@
 					"source": {
 						"type": "SqlSource",
 						"sqlReaderQuery": {
-							"value": "select * from data_source_table where LastModifytime > '@{activity('OldWaterMarkLookup').output.firstRow.WatermarkValue}' and LastModifytime <= '@{activity('NewWaterMarkLookup').output.firstRow.NewWatermarkvalue}'",
+							"value": "select * from data_source_tabl where LastModifytime > '@{activity('OldWaterMarkLookup').output.firstRow.WatermarkValue}' and LastModifytime <= '@{activity('NewWaterMarkLookup').output.firstRow.NewWatermarkvalue}'",
 							"type": "Expression"
 						}
 					},
@@ -206,11 +206,44 @@
 						"receiver": "@pipeline().parameters.receiver"
 					}
 				}
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "CopyInc",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"typeProperties": {
+					"url": "https://prod-30.eastus.logic.azure.com:443/workflows/21ab6c507a8c41f0861275c0fa342e36/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=N2znDHb_6x34WfB_7XXlI5Zh_Sf5VpfR2DMguNKs9fU",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"message": "@{activity('CopyInc').error.message}",
+						"dataFactoryName": "@{pipeline().DataFactory}",
+						"pipelineName": "@{pipeline().Pipeline}",
+						"receiver": "@pipeline().parameters.receiver"
+					}
+				}
 			}
 		],
 		"parameters": {
 			"receiver": {
-				"type": "String"
+				"type": "String",
+				"defaultValue": "madhav.ganji@gmail.com"
 			}
 		}
 	},
